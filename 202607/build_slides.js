@@ -62,7 +62,7 @@ function base(slide, kicker, page) {
     ], { x: M, y: 0.34, w: 10, h: 0.32, fontSize: 11, fontFace: F.mono, margin: 0, charSpacing: 1 });
   }
   if (page) {
-    slide.addText(String(page).padStart(2, "0") + " / 11", {
+    slide.addText(String(page).padStart(2, "0") + " / 12", {
       x: W - 1.9, y: 6.95, w: 1.2, h: 0.3, align: "right",
       fontSize: 10, color: C.mute2, fontFace: F.mono, margin: 0,
     });
@@ -112,10 +112,35 @@ function card(slide, x, y, w, h, fill) {
   s.addNotes("アマチュア無線で使うFT8の話。Web/モバイル/クラウドの人には低レイヤー。ビール片手に、データが必ず欠ける世界の執念を見てください。");
 }
 
-/* ---------------- 2. WHAT IS FT8 ---------------- */
+/* ---------------- 2. DEMO LINK + QR ---------------- */
 {
   const s = pres.addSlide();
-  base(s, "what is it", 2);
+  base(s, "live demo", 2);
+  heading(s, "デモ");
+
+  // QRコード（白カードで quiet zone とコントラストを確保）
+  const qw = 3.9, qx = M + 0.2, qy = 2.1, qh = 3.9;
+  s.addShape(pres.shapes.ROUNDED_RECTANGLE, {
+    x: qx, y: qy, w: qw, h: qh, rectRadius: 0.08,
+    fill: { color: "FFFFFF" }, line: { color: C.line, width: 1 }, shadow: shadow(),
+  });
+  const pad = 0.5, img = qw - 2 * pad;
+  s.addImage({ path: path.join(__dirname, "qr-demo.png"), x: qx + pad, y: qy + pad, w: img, h: img });
+
+  // URL（QRの右に、垂直中央で大きく）
+  const ux = qx + qw + 0.7;
+  s.addText("https://ft8.numa08.dev", {
+    x: ux, y: qy, w: W - M - ux, h: qh, fontSize: 34, bold: true,
+    color: C.cyan, fontFace: F.mono, valign: "middle", margin: 0,
+  });
+
+  s.addNotes("デモページ(https://ft8.numa08.dev)。使い方や『開いたまま待っていてほしい』お願いは口頭で伝える。");
+}
+
+/* ---------------- 3. WHAT IS FT8 ---------------- */
+{
+  const s = pres.addSlide();
+  base(s, "what is it", 3);
   heading(s, "FT8 とは？");
   s.addText([
     { text: "微弱電波", options: { color: C.cyan, bold: true } },
@@ -142,10 +167,10 @@ function card(slide, x, y, w, h, fill) {
   s.addNotes("数ワットの電波が地球の裏側へ。ノイズと減衰でデータは欠ける。それでも77bitでどうにか交信を成立させる。");
 }
 
-/* ---------------- 3. PROBLEM ---------------- */
+/* ---------------- 4. PROBLEM ---------------- */
 {
   const s = pres.addSlide();
-  base(s, "the problem", 3);
+  base(s, "the problem", 4);
   heading(s, "普段のネット と 微弱電波");
   const cw = (W - 2 * M - 0.5) / 2;
   // 左: 普段
@@ -174,10 +199,10 @@ function card(slide, x, y, w, h, fill) {
   s.addNotes("山梨から地球の裏側へ直接。ケーブルは非現実的だから電波。でも電波は減衰と妨害。データは必ず欠ける、が出発点。");
 }
 
-/* ---------------- 4. COMPRESSION ---------------- */
+/* ---------------- 5. COMPRESSION ---------------- */
 {
   const s = pres.addSlide();
-  base(s, "source encoding", 4);
+  base(s, "source encoding", 5);
   heading(s, "無線に最適化した圧縮術");
   s.addText("定型文（コールサイン・位置・信号レポート）だから、徹底的に圧縮できる", {
     x: M, y: 1.9, w: W - 2 * M, h: 0.4, fontSize: 16, color: C.mute, fontFace: F.jp, margin: 0,
@@ -217,7 +242,7 @@ function card(slide, x, y, w, h, fill) {
   s.addNotes("アマチュア無線の文脈。定型文だから圧縮できる。コールサイン28bit、位置15bit。96bit相当が43bitに。");
 }
 
-/* ---------------- 5. SECTION DIVIDER (LDPC) ---------------- */
+/* ---------------- 6. SECTION DIVIDER (LDPC) ---------------- */
 {
   const s = pres.addSlide();
   s.background = { color: C.panel2 };
@@ -233,10 +258,10 @@ function card(slide, x, y, w, h, fill) {
   s.addNotes("ここからが山場。誤り訂正のLDPC。数学的なのに、解く実態は確率論的。そこに痺れた。");
 }
 
-/* ---------------- 6. TX SIDE ---------------- */
+/* ---------------- 7. TX SIDE ---------------- */
 {
   const s = pres.addSlide();
-  base(s, "LDPC · 送信側", 6);
+  base(s, "LDPC · 送信側", 7);
   heading(s, "送信側：数学で「保険」をかける", { bar: C.gold });
   // ビットレイアウトバー
   const bx = M, by = 2.1, bw = W - 2 * M, bh = 0.95, total = 174;
@@ -275,10 +300,10 @@ function card(slide, x, y, w, h, fill) {
   s.addNotes("77にCRC14足して91。生成行列で83パリティ。合計174bit。肝は『正しい符号語はH·c=0』という厳密な制約。これが受信側の武器になる。");
 }
 
-/* ---------------- 7. RX SIDE ---------------- */
+/* ---------------- 8. RX SIDE ---------------- */
 {
   const s = pres.addSlide();
-  base(s, "LDPC · 受信側", 7);
+  base(s, "LDPC · 受信側", 8);
   heading(s, "受信側：怪しいビットを「特定」する流れ", { bar: C.gold });
   s.addText([
     { text: "届くのは曖昧な値（軟判定）。", options: { color: C.ink } },
@@ -367,11 +392,11 @@ function card(slide, x, y, w, h, fill) {
   s.addNotes("流れ：①受信ビットは軟判定で一部が怪しい→②全検査式を計算、0にならない式が矛盾→③矛盾する式に共通するビットが容疑者。自信のない方を反転して全式0なら確定。これを確率で高速反復するのがBP、ダメならOSD。数字は説明用の例。");
 }
 
-/* ---------------- 8. PUNCHLINE ---------------- */
+/* ---------------- 9. PUNCHLINE ---------------- */
 {
   const s = pres.addSlide();
   s.background = { color: C.bg };
-  base(s, "the punchline", 8);
+  base(s, "the punchline", 9);
   s.addShape(pres.shapes.RECTANGLE, { x: M, y: 2.2, w: 0.12, h: 2.6, fill: { color: C.cyan }, line: { type: "none" } });
   s.addText([
     { text: "仕組みは ", options: { color: C.ink } },
@@ -390,10 +415,10 @@ function card(slide, x, y, w, h, fill) {
   s.addNotes("ここが感動ポイント。厳密な数学を確率で解く。確率で殴って、最後はCRCで答え合わせする二段構え。");
 }
 
-/* ---------------- 9. 15s CYCLE ---------------- */
+/* ---------------- 10. 15s CYCLE ---------------- */
 {
   const s = pres.addSlide();
-  base(s, "timing", 9);
+  base(s, "timing", 10);
   heading(s, "15秒に詰め込む「絶対に通信する」意思");
   // タイムライン 0-60s, 4窓
   const tx = M, ty = 2.5, tw = W - 2 * M, th = 0.9;
@@ -424,10 +449,10 @@ function card(slide, x, y, w, h, fill) {
   s.addNotes("GMTの15秒サイクルで送受切替。実送信は12.6秒、残りは同期マージン。だから全員NTP同期。1回失敗しても繰り返して確率を上げる。");
 }
 
-/* ---------------- 10. STATE MACHINE ---------------- */
+/* ---------------- 11. STATE MACHINE ---------------- */
 {
   const s = pres.addSlide();
-  base(s, "state machine", 10);
+  base(s, "state machine", 11);
   heading(s, "会話の文脈を、機械が状態で持つ");
   // 6状態フロー
   const states = ["Calling", "Replying", "Report", "Roger Rpt", "Rogers", "Signoff"];
@@ -459,11 +484,11 @@ function card(slide, x, y, w, h, fill) {
   s.addNotes("交信は決まった型＝ステートマシン。次の型が読めるからa prioriが効く。77bit総当たりが15bitに。これがさっきの80%削減の正体。なお起点は必ず人間。");
 }
 
-/* ---------------- 11. SUMMARY + CLOSING ---------------- */
+/* ---------------- 12. SUMMARY + CLOSING ---------------- */
 {
   const s = pres.addSlide();
   s.background = { color: C.panel2 };
-  base(s, "wrap up", 11);
+  base(s, "wrap up", 12);
   heading(s, "「欠ける前提」への、多層的な最適化");
   const items = [
     ["① 数学を確率で解く", "LDPC × Belief Propagation", C.gold],
