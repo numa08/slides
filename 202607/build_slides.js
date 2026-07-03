@@ -281,7 +281,7 @@ function card(slide, x, y, w, h, fill) {
     { text: "① ", options: { color: C.gold, bold: true } },
     { text: "データ77bit に多項式 ", options: { color: C.ink } },
     { text: "0x6757", options: { color: C.cyan, fontFace: F.mono } },
-    { text: " を当て 14bit CRC（誤り検査）を計算（ハッシュ的）", options: { color: C.ink } },
+    { text: " を当て 14bit CRC（誤り検査用チェックサム）を計算", options: { color: C.ink } },
   ], { x: M, y: 3.55, w: W - 2 * M, h: 0.4, fontSize: 16, fontFace: F.jp, margin: 0 });
   s.addText([
     { text: "② ", options: { color: C.gold, bold: true } },
