@@ -3,3 +3,4 @@ build/
 
 # 生成物（build_slides.js から再生成可能）
 *.pptx
+*.pdf

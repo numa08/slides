@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "slides": "node scripts/gen-slides.js",
+    "slides:pdf": "node scripts/to-pdf.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

@@ -21,13 +21,24 @@ YYYYMM/
 ## スライド生成
 
 ```bash
-pnpm slides <path-to-md>
+pnpm slides <path-to-md>       # .pptx を出力
 #   例) pnpm slides 202607/FT8の話.md  ->  202607/FT8の話.pptx
+
+pnpm slides:pdf <path-to-md>   # .pptx を生成し、さらに .pdf に変換（SpeakerDeck 用の配布物）
+#   例) pnpm slides:pdf 202607/FT8の話.md  ->  202607/FT8の話.pdf
 ```
 
 - ランナーは [scripts/gen-slides.js](scripts/gen-slides.js)。渡された md と**同じディレクトリの `build_slides.js`** を実行し、**同じ場所に同名の `.pptx`** を出力する。
 - `build_slides.js` は `process.argv[2]`（md パス）から**出力先・出力名のみ**を決める。スライドの内容はスクリプト内に直接定義する（md は自動パースしない）。
 - 生成は**決定論的**（毎回同一の出力）。乱数を使う装飾は固定シードにすること。
+
+### PDF 出力（SpeakerDeck 用）
+
+SpeakerDeck へは PDF でアップロードする。PDF 変換は [scripts/to-pdf.js](scripts/to-pdf.js) が担い、**閲覧環境と同じ Windows の PowerPoint 本体**（COM 経由）で pptx → pdf に変換する。
+
+- **なぜ PowerPoint で変換するか**: このデッキは Windows フォント（Yu Gothic / Consolas）前提で座標を手計算している。LibreOffice や Chromium など Linux 側のレンダラで変換するとフォントが置換されてレイアウトが崩れる。閲覧時と同一のレンダラで変換することでフォント忠実性を担保する。
+- **前提**: **WSL2 + Windows に PowerPoint 本体がインストール済み**であること（`powershell.exe` から PowerPoint COM が使える環境）。この前提が無い環境では `pnpm slides:pdf` は失敗する（pptx 生成までは可能）。
+- UNC パス・日本語 argv を避けるため、Windows ローカルの一時フォルダに ASCII 名でコピーしてから変換し、生成した PDF を WSL 側の同名ファイルへ戻している。
 
 ## build_slides.js を書くときの約束
 
@@ -48,5 +59,5 @@ pnpm slides <path-to-md>
 ## Git / 依存
 
 - パッケージマネージャは **pnpm**（`packageManager` 参照）。依存は `pptxgenjs`。
-- `.gitignore`: `node_modules/`、`build/`、**`*.pptx`（生成物なのでコミットしない。`build_slides.js` から再生成可能）**。
-- コミット対象は原稿 `.md`・`build_slides.js`・`scripts/`・設定ファイル。生成された `.pptx` はコミットしない。
+- `.gitignore`: `node_modules/`、`build/`、**`*.pptx` / `*.pdf`（生成物なのでコミットしない。`build_slides.js` から再生成可能）**。
+- コミット対象は原稿 `.md`・`build_slides.js`・`scripts/`・設定ファイル。生成された `.pptx` / `.pdf` はコミットしない。
